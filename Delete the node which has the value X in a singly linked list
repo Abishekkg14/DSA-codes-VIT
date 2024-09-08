@@ -1,0 +1,105 @@
+/*Input format :
+The first line of input consists of an integer N, representing the number of elements.
+
+The second line consists of N space-separated integers, representing the elements of the linked list.
+
+The third line consists of an integer X, representing the value after which the node has to be deleted.
+
+Output format :
+The first line of output prints the elements of the original linked list in the format: "Original Linked List: " followed by the linked list elements, separated by " -> " and ending with "NULL".
+
+The second line prints the modified linked list after deleting the node after the value X in the format: "After deleting node after X: " followed by the modified linked list elements, separated by " -> " and ending with "NULL".*/
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int value;
+    struct Node *next;
+};
+
+// Function to insert a node at the end of the linked list
+struct Node* insertionatend(struct Node *end, int Value) {
+    struct Node *ptr = (struct Node*)malloc(sizeof(struct Node)); // Corrected sizeof
+
+    ptr->value = Value;
+    ptr->next = NULL;
+
+    if (end != NULL) {
+        end->next = ptr;
+    }
+
+    return ptr;
+}
+
+// Function to traverse and print the linked list
+void traversal(struct Node *ptr) {
+    while (ptr != NULL) {
+        printf("%d -> ", ptr->value);
+        ptr = ptr->next;
+    }
+    printf("NULL\n"); // Added newline for better formatting
+}
+
+// Function to delete the node after the node with value x
+void deleteelement(struct Node *head, int x) {
+    struct Node *ptr1 = head;
+
+    // Find the node with the value x
+    while (ptr1 != NULL && ptr1->value != x) {
+        ptr1 = ptr1->next;
+    }
+
+    // If node with value x is found and it has a next node
+    if (ptr1 != NULL && ptr1->next != NULL) {
+        struct Node *node_to_delete = ptr1->next;
+        ptr1->next = node_to_delete->next; // Skip the node to delete
+        free(node_to_delete); // Free the memory of the node to delete
+    }
+}
+
+int main() {
+    int n;
+    scanf("%d", &n);
+
+    int array[n];
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &array[i]);
+    }
+
+    int x;
+    scanf("%d", &x);
+
+    struct Node *head = NULL;
+    struct Node *end = NULL;
+
+    // Create the linked list from the array
+    for (int i = n - 1; i >= 0; i--) { // Fixed: Traverse array backwards to create list in input order
+        if (head == NULL) {
+            head = (struct Node*)malloc(sizeof(struct Node));
+            head->value = array[i];
+            head->next = NULL;
+            end = head;
+        } else {
+            end = insertionatend(end, array[i]);
+        }
+    }
+
+    // Print the original linked list
+    printf("Original Linked List: ");
+    traversal(head);
+
+    // Delete the node after the node with value x
+    printf("After deleting node after %d: ", x);
+    deleteelement(head, x);
+    traversal(head);
+
+    return 0;
+}
+
+/*Sample output
+Original Linked List: 15 -> 28 -> 36 -> 43 -> NULL
+After deleting node after 36: 15 -> 28 -> 43 -> NULL
+*/
+

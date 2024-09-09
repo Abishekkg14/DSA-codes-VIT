@@ -1,0 +1,119 @@
+/*write a c program with the following criteria:-
+
+input format:-
+
+in the main function:-
+ 
+-> n must be taken as input where it represents the no of data sales points;
+
+-> n spaced integers are taken as input in an array
+
+-> k represents the sliding window number
+
+-> T represents the target value
+
+
+output format:-
+
+the output must print a single integer representing the count of subarrays with a product greater than T within each sliding window.
+
+The program must implemented using Stack data structure , user defined using structures concept in c programming.*/
+
+Sample input and output:-
+Enter the number of sales points (n):5
+ Enter 5 space-separated integers:4 5 9 7 10
+ Enter the sliding window size (k):3
+ Enter the tar
+get value (T):12
+
+O/P- 9
+
+#include <stdio.h>
+#include <stdlib.h>
+
+// Structure for Stack
+struct Stack {
+    int top;
+    int items[100];  // Stack size, can be adjusted as needed
+};
+
+// Initialize the stack
+void initStack(struct Stack *s) {
+    s->top = -1;
+}
+
+// Check if stack is empty
+int isEmpty(struct Stack *s) {
+    return s->top == -1;
+}
+
+// Push element onto stack
+void push(struct Stack *s, int value) {
+    s->items[++(s->top)] = value;
+}
+
+// Pop element from stack
+int pop(struct Stack *s) {
+    return s->items[(s->top)--];
+}
+
+// Function to count subarrays with product greater than T in each sliding window
+int countSubarrays(int arr[], int n, int k, int T) {
+    int count = 0;
+
+    // Iterate through each sliding window of size k
+    for (int i = 0; i <= n - k; i++) {
+        // Stack to hold the elements in the current sliding window
+        struct Stack s;
+        initStack(&s);
+
+        // Iterate through each subarray within the sliding window
+        for (int j = i; j < i + k; j++) {
+            int product = 1;
+
+            // Consider all subarrays starting from index j
+            for (int p = j; p < i + k; p++) {
+                product *= arr[p];
+                if (product > T) {
+                    count++;
+                }
+            }
+        }
+    }
+
+    return count;
+}
+
+int main() {
+    int n, k, T;
+
+    // Input for number of sales points
+    printf("Enter the number of sales points (n): ");
+    scanf("%d", &n);
+
+    int arr[n];
+
+    // Input array of sales points
+    printf("Enter %d space-separated integers: ", n);
+    for (int i = 0; i < n; i++) {
+        scanf("%d", &arr[i]);
+    }
+
+    // Input for sliding window size
+    printf("Enter the sliding window size (k): ");
+    scanf("%d", &k);
+
+    // Input for target value
+    printf("Enter the target value (T): ");
+    scanf("%d", &T);
+
+    // Output the count of subarrays with product greater than T
+    int result = countSubarrays(arr, n, k, T);
+    printf("%d\n", result);
+
+    return 0;
+}
+
+
+
+

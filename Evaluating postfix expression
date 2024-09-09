@@ -1,0 +1,91 @@
+#include <ctype.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+
+#define MAX 100
+
+struct Stack {
+    int top;
+    int items[MAX];
+};
+
+void init(struct Stack *s) {
+    s->top = -1;
+}
+
+int isEmpty(struct Stack *s) {
+    return s->top == -1;
+}
+
+void push(struct Stack *s, int item) {
+    if (s->top < MAX - 1) {
+        s->top++;
+        s->items[s->top] = item;
+    } else {
+        fprintf(stderr, "Stack overflow\n");
+        exit(1);
+    }
+}
+
+int pop(struct Stack *s) {
+    if (isEmpty(s)) {
+        fprintf(stderr, "Stack underflow\n");
+        exit(1);
+    } else {
+        return s->items[s->top--];
+    }
+}
+
+int perform_operation(int op1, int op2, char op) {
+    switch (op) {
+        case '+': return op1 + op2;
+        case '-': return op1 - op2;
+        case '*': return op1 * op2;
+        case '/':
+            if (op2 == 0) {
+                fprintf(stderr, "Division by zero\n");
+                exit(1);
+            }
+            return op1 / op2;
+        default:
+            fprintf(stderr, "Invalid operator\n");
+            exit(1);
+    }
+}
+
+int evaluate_postfix(char *expression) {
+    struct Stack s;
+    init(&s);
+
+    char *token = strtok(expression, " ");
+
+    while (token != NULL) {
+        if (isdigit(token[0])) {
+            push(&s, atoi(token));
+        } else {
+            int op2 = pop(&s);
+            int op1 = pop(&s);
+            int result = perform_operation(op1, op2, token[0]);
+            push(&s, result);
+        }
+        token = strtok(NULL, " ");
+    }
+
+    return pop(&s);
+}
+
+int main() {
+    char expression[MAX];
+
+    printf("Enter a postfix expression: ");
+    fgets(expression, sizeof(expression), stdin);
+
+    expression[strcspn(expression, "\n")] = 0; // Remove the newline character
+
+    int result = evaluate_postfix(expression);
+
+    printf("Result: %d\n", result);
+
+    return 0;
+}

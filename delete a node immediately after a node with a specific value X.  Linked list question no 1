@@ -1,0 +1,140 @@
+Problem Statement
+
+Akash wants to write a program that populates values in a singly linked list by inserting each element into the front of the list. After insertion,
+the program should delete a node immediately after a node with a specific value X. 
+
+Assist him with a suitable program.
+
+Input format :
+The first line of input consists of an integer N, representing the number of elements.
+
+The second line consists of N space-separated integers, representing the elements of the linked list.
+
+The third line consists of an integer X, representing the value after which the node has to be deleted.
+
+Output format :
+The first line of output prints the elements of the original linked list in the format: "Original Linked List: " followed by the linked list elements, separated by " -> " and ending with "NULL".
+
+The second line prints the modified linked list after deleting the node after the value X in the format: "After deleting node after X: " followed by the modified linked list elements, separated by " -> " and ending with "NULL".
+
+
+
+Refer to the sample output for formatting specifications.
+
+Code constraints :
+2 ≤ N ≤ 10
+
+1 ≤ elements of the linked list ≤ 100
+
+X will be a value present in the linked list excluding the first and last elements.
+
+Sample test cases :
+
+Input 1 :
+4
+15 28 36 43
+36
+Output 1 :
+Original Linked List: 43 -> 36 -> 28 -> 15 -> NULL
+After deleting node after 36: 43 -> 36 -> 15 -> NULL
+
+Input 2 :
+5
+1 2 3 4 5
+2
+Output 2 :
+Original Linked List: 5 -> 4 -> 3 -> 2 -> 1 -> NULL
+After deleting node after 2: 5 -> 4 -> 3 -> 2 -> NULL
+
+Solution:-
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node{
+    int value;
+    struct Node *next;
+};
+
+
+struct Node* insertionatend(struct Node *end, int Value){
+    
+    struct Node *ptr = (struct Node*)malloc(sizeof(struct Node));
+    
+    ptr->value = Value;
+    ptr->next = NULL;
+    
+    if(end!=NULL){
+        end->next = ptr;
+    }
+    
+    return ptr;
+}
+
+void traversal(struct Node *ptr){
+    while(ptr!=NULL){
+        printf("%d -> ",ptr->value);
+        ptr = ptr->next;
+    }
+    printf("NULL");
+}
+
+void deleteelement(struct Node *head, int x){
+    
+    struct Node *ptr1 = head;
+    
+    while(ptr1->value!=x){
+        ptr1 = ptr1->next;
+    }
+    
+    if(ptr1->next!=NULL){
+        
+        struct Node *ptr2 = ptr1->next;
+        ptr1->next = ptr2->next;
+        free(ptr2);
+    }
+}
+
+
+int main(){
+    
+    int n;
+    scanf("%d",&n);
+    
+    int array[n];
+    for(int i=0; i<n; i++){
+        scanf("%d",&array[i]);
+    }
+    
+    int x;
+    scanf("%d",&x);
+    
+    struct Node *head = NULL;
+    struct Node *end = NULL;
+    
+    for(int i=n-1; i>=0; i--){
+        
+        if(head==NULL){
+            head = (struct Node*)malloc(sizeof(struct Node));
+            
+            head->value = array[i];
+            head->next = NULL;
+            end = head;
+            
+        }
+        else{
+            end = insertionatend(end,array[i]);
+        }
+    }
+    
+    printf("Original Linked List: ");
+    traversal(head);
+    
+    printf("\nAfter deleting node after %d: ",x);
+    
+    deleteelement(head,x);
+    traversal(head);
+    
+    return 0;
+    
+}
